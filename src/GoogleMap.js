@@ -28,6 +28,7 @@ const MapContainer = ({ google, lat, lng }) => {
   };
   useEffect(() => {
     getData(center.lat, center.lng);
+    console.log("몇번 렌더링");
   }, [center]);
 
   const onDragend = google => {
@@ -74,5 +75,5 @@ const MapContainer = ({ google, lat, lng }) => {
 };
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyD2F5CSl8i_8Afao6BZZCrkY5elVEG9DKk"
+  apiKey: process.env.API_KEY
 })(MapContainer);
