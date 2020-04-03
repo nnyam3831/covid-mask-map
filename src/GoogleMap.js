@@ -28,7 +28,6 @@ const MapContainer = ({ google, lat, lng }) => {
   };
   useEffect(() => {
     getData(center.lat, center.lng);
-    console.log("몇번 렌더링");
   }, [center]);
 
   const onDragend = google => {

@@ -4,8 +4,8 @@ import { todayUser, todaySet } from "./utils";
 
 const Container = styled.div`
   position: fixed;
-  left: 25px;
-  bottom: 25px;
+  left: 15px;
+  bottom: 15px;
   width: 200px;
   height: 200px;
   background-color: black;
