@@ -3,35 +3,38 @@ import React, { useEffect, useState, useRef } from "react";
 import { getMaskInfo } from "./api";
 import ReactDOM from "react-dom";
 import { MARKER_PIN } from "./static";
-const MapContainer = ({ google }) => {
-  const init = { lat: 0, lng: 0 };
+const MapContainer = ({ google, lat, lng }) => {
+  const init = { lat: lat, lng: lng };
   const mapStyles = {
     width: "100%",
     height: "100%"
   };
+  const iconSetup = color => {
+    if (color) {
+      return {
+        color: color
+      };
+    } else {
+      return null;
+    }
+  };
   const mapRef = useRef();
-  const maps = google.maps;
-  const mapNode = ReactDOM.findDOMNode(mapRef.current);
-
   const [center, setCenter] = useState(init);
   const [info, setInfo] = useState(null);
   const getData = async () => {
     const [data, error] = await getMaskInfo(center.lat, center.lng);
     if (error !== null) return console.log(error);
     setInfo(data);
-    console.log("api call");
   };
   useEffect(() => {
     getData(center.lat, center.lng);
   }, [center]);
 
   const onDragend = google => {
-    const { maps } = google;
     const { map } = mapRef.current;
     const { center } = map;
     setCenter({ lat: center.lat(), lng: center.lng() });
   };
-
   return (
     <Map
       center={center}
@@ -44,24 +47,28 @@ const MapContainer = ({ google }) => {
     >
       {info &&
         info.data.stores &&
-        info.data.stores.map(store => (
-          <Marker
-            key={store.code}
-            position={{ lat: store.lat, lng: store.lng }}
-            onClick={() => console.log("hihi")}
-            label="약국"
-            onMouseover={() => console.log("많음")}
-            icon={{
-              backgroundColor: "red",
-              strokeColor: "red",
-              // scaledSize: new window.google.maps.Size(35, 50),
-              // url: "https://image.flaticon.com/icons/svg/1946/1946412.svg"
-              url: MARKER_PIN.RED
-            }}
-          >
-            <div>오홍홍</div>
-          </Marker>
-        ))}
+        info.data.stores.map(store => {
+          let color = null;
+          if (store.remain_stat === "plenty") {
+            color = MARKER_PIN.GREEN;
+          } else if (store.remain_stat === "some") {
+            color = MARKER_PIN.ORANGE;
+          } else if (store.remain_stat === "few") {
+            color = MARKER_PIN.RED;
+          } else {
+            color = null;
+          }
+          if (color !== null)
+            return (
+              <Marker
+                key={store.code}
+                position={{ lat: store.lat, lng: store.lng }}
+                icon={{
+                  url: color
+                }}
+              ></Marker>
+            );
+        })}
     </Map>
   );
 };

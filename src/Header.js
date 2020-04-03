@@ -13,6 +13,7 @@ const Container = styled.div`
 const Title = styled.span`
   font-size: 24px;
   font-weight: 600;
+  text-transform: uppercase;
   color: white;
 `;
 export default () => {
