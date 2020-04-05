@@ -7,12 +7,12 @@ const MapContainer = ({ google, lat, lng }) => {
   const init = { lat: lat, lng: lng };
   const mapStyles = {
     width: "100%",
-    height: "100%"
+    height: "100%",
   };
-  const iconSetup = color => {
+  const iconSetup = (color) => {
     if (color) {
       return {
-        color: color
+        color: color,
       };
     } else {
       return null;
@@ -20,17 +20,18 @@ const MapContainer = ({ google, lat, lng }) => {
   };
   const mapRef = useRef();
   const [center, setCenter] = useState(init);
-  const [info, setInfo] = useState(null);
+  const [info, setInfo] = useState([]);
   const getData = async () => {
-    const [data, error] = await getMaskInfo(center.lat, center.lng);
+    const [tempData, error] = await getMaskInfo(center.lat, center.lng);
     if (error !== null) return console.log(error);
-    setInfo(data);
+    const { data } = tempData;
+    setInfo(data.stores);
   };
   useEffect(() => {
     getData(center.lat, center.lng);
   }, [center]);
 
-  const onDragend = google => {
+  const onDragend = (google) => {
     const { map } = mapRef.current;
     const { center } = map;
     setCenter({ lat: center.lat(), lng: center.lng() });
@@ -43,11 +44,10 @@ const MapContainer = ({ google, lat, lng }) => {
       google={google}
       zoom={18}
       style={mapStyles}
-      initialCenter={{ lat: 37.4737991, lng: 127.1077285 }}
+      initialCenter={{ lat: lat, lng: lng }}
     >
       {info &&
-        info.data.stores &&
-        info.data.stores.map(store => {
+        info.map((store) => {
           let color = null;
           if (store.remain_stat === "plenty") {
             color = MARKER_PIN.GREEN;
@@ -64,7 +64,7 @@ const MapContainer = ({ google, lat, lng }) => {
                 key={store.code}
                 position={{ lat: store.lat, lng: store.lng }}
                 icon={{
-                  url: color
+                  url: color,
                 }}
               ></Marker>
             );
@@ -74,5 +74,5 @@ const MapContainer = ({ google, lat, lng }) => {
 };
 
 export default GoogleApiWrapper({
-  apiKey: process.env.API_KEY
+  apiKey: process.env.API_KEY,
 })(MapContainer);
