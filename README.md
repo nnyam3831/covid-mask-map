@@ -1,7 +1,7 @@
 # Mask Map for COVID 19
 
-https://mytown-mask.netlify.app/를 참고하여 만들었습니다.
-전국 마스크 재고를 확인할 수 있는 어플리케이션
+https://mytown-mask.netlify.app/를 참고하여 만들었습니다.  
+전국 마스크 재고를 확인할 수 있는 웹 사이트
 
 ## Stack
 * React
