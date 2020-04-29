@@ -3,6 +3,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { getMaskInfo } from "./api";
 import ReactDOM from "react-dom";
 import { MARKER_PIN } from "./static";
+import Any from "./Marker";
+// import Marker from "./Marker";
 const MapContainer = ({ google, lat, lng }) => {
   const init = { lat: lat, lng: lng };
   const mapStyles = {
@@ -21,6 +23,22 @@ const MapContainer = ({ google, lat, lng }) => {
   const mapRef = useRef();
   const [center, setCenter] = useState(init);
   const [info, setInfo] = useState([]);
+  const [showingInfoWindow, setShowingInfoWindow] = useState(false);
+  const [activeMarker, setActiveMarker] = useState({});
+  const [selectedPlace, setSelectedPlace] = useState({});
+
+  const onMarkerClick = (props, marker, e) => {
+    setShowingInfoWindow(true);
+    setActiveMarker(marker);
+    setSelectedPlace(props);
+    console.log(marker);
+  };
+  const onMapClicked = (props) => {
+    if (showingInfoWindow) {
+      setShowingInfoWindow(false);
+      setActiveMarker(null);
+    }
+  };
   const getData = async () => {
     const [tempData, error] = await getMaskInfo(center.lat, center.lng);
     if (error !== null) return console.log(error);
@@ -38,6 +56,7 @@ const MapContainer = ({ google, lat, lng }) => {
   };
   return (
     <Map
+      onClick={onMapClicked}
       center={center}
       onDragend={({ google }) => onDragend(google)}
       ref={mapRef}
@@ -62,11 +81,19 @@ const MapContainer = ({ google, lat, lng }) => {
             return (
               <Marker
                 key={store.code}
+                onClick={onMarkerClick}
                 position={{ lat: store.lat, lng: store.lng }}
                 icon={{
                   url: color,
                 }}
-              ></Marker>
+                name={"current location"}
+              >
+                <InfoWindow marker={activeMarker} visible={true}>
+                  <div>
+                    <h1>{selectedPlace.name}</h1>
+                  </div>
+                </InfoWindow>
+              </Marker>
             );
         })}
     </Map>
